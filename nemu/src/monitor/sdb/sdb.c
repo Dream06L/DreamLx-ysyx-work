@@ -18,13 +18,13 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-
+#include <utils.h>
 static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
 
-/* We use the `readline' library to provide more flexibility to read from stdin. */
+/* 我们使用 `readline` 库来提供从标准输入读取的更多灵活性*/
 static char* rl_gets() {
   static char *line_read = NULL;
 
@@ -49,15 +49,16 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
+  nemu_state.state=NEMU_QUIT;
   return -1;
 }
 
 static int cmd_help(char *args);
 
 static struct {
-  const char *name;
-  const char *description;
-  int (*handler) (char *);
+  const char *name;//命令名字
+  const char *description;//命令描述
+  int (*handler) (char *);//命令对应的函数指针
 } cmd_table [] = {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
@@ -70,12 +71,12 @@ static struct {
 #define NR_CMD ARRLEN(cmd_table)
 
 static int cmd_help(char *args) {
-  /* extract the first argument */
+  /* 提取第一个参数 */
   char *arg = strtok(NULL, " ");
   int i;
 
   if (arg == NULL) {
-    /* no argument given */
+    /* 没有提供参数 */
     for (i = 0; i < NR_CMD; i ++) {
       printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
     }
@@ -105,12 +106,12 @@ void sdb_mainloop() {
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 
-    /* extract the first token as the command */
+    /* 提取第一个标记作为命令 */
     char *cmd = strtok(str, " ");
     if (cmd == NULL) { continue; }
 
-    /* treat the remaining string as the arguments,
-     * which may need further parsing
+    /* 将剩余的字符串视为参数,
+     * 可能需要进一步解析
      */
     char *args = cmd + strlen(cmd) + 1;
     if (args >= str_end) {
@@ -135,7 +136,7 @@ void sdb_mainloop() {
 }
 
 void init_sdb() {
-  /* Compile the regular expressions. */
+  /* 编译正则表达式. */
   init_regex();
 
   /* Initialize the watchpoint pool. */
