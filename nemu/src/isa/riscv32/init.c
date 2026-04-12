@@ -16,8 +16,8 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
-// this is not consistent with uint8_t
-// but it is ok since we do not access the array directly
+//这与 uint8 t 不一致
+// 但没关系，因为我们不直接访问数组
 static const uint32_t img [] = {
   0x00000297,  // auipc t0,0
   0x00028823,  // sb  zero,16(t0)
@@ -27,17 +27,17 @@ static const uint32_t img [] = {
 };
 
 static void restart() {
-  /* Set the initial program counter. */
+  /* 设置初始程序计数器 */
   cpu.pc = RESET_VECTOR;
 
-  /* The zero register is always 0. */
+  /* 零寄存器始终为0 */
   cpu.gpr[0] = 0;
 }
 
 void init_isa() {
-  /* Load built-in image. */
+  /* 加载内置图像 */
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
-  /* Initialize this virtual computer system. */
+  /* 初始化这个虚拟计算机系统 */
   restart();
 }

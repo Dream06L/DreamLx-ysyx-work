@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <utils.h>
+#include <memory/vaddr.h> //读写内存
 static int is_batch_mode = false;
 
 void init_regex();
@@ -41,12 +42,12 @@ static char* rl_gets() {
 
   return line_read;
 }
+/*----------------------------------------下面是cmd函数-------------------------------------------*/
 
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
 }
-
 
 static int cmd_q(char *args) {
   nemu_state.state=NEMU_QUIT;
@@ -54,6 +55,42 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_help(char *args);
+
+static int cmd_si(char *args){
+  int n;
+  if(args==NULL) n=1;
+  else{
+    sscanf(args,"%d",&n);
+  }
+  cpu_exec(n);
+  return 0;
+}
+
+static int cmd_info(char *args){
+  if(args==NULL) return 0;
+
+  char subcmd;
+  sscanf(args,"%c",&subcmd);
+  
+  if(subcmd=='r') isa_reg_display();
+  else if(subcmd=='w')
+  {}
+
+  return 0;
+}
+static int cmd_x(char *args){
+  if(args==NULL) return 0;
+
+  int n=0,i=0;
+  word_t expr;
+  sscanf(args,"%d %x",&n,&expr);
+  for(i=0;i<n;i++){
+    word_t data=vaddr_read(expr+i*4,4);
+    printf("0x%08x:   0x%08x\n",expr+i*4,data);
+  }
+  return 0;
+}
+/*----------------------------------上面是cmd函数----------------------------------------------*/
 
 static struct {
   const char *name;//命令名字
@@ -63,8 +100,10 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
+  {"si","single stepping",cmd_si},
+  {"info","print program status",cmd_info},
+  {"x","scan memory",cmd_x},
+  /* TODO:添加更多命令 */
 
 };
 
@@ -113,7 +152,7 @@ void sdb_mainloop() {
     /* 将剩余的字符串视为参数,
      * 可能需要进一步解析
      */
-    char *args = cmd + strlen(cmd) + 1;
+    char *args = cmd + strlen(cmd) + 1;//参数
     if (args >= str_end) {
       args = NULL;
     }
