@@ -74,6 +74,7 @@ typedef struct token {
 static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
+//输入的表达式进行词法分析
 static bool make_token(char *e) {
   int position = 0;
   int i;
@@ -128,15 +129,27 @@ static bool make_token(char *e) {
   return true;
 }
 
+static bool check_parentheses(int p, int q){
+  int i=p,match=0;
 
+  while(i<=q){
+    if(tokens[i].type=='(') {match++;}
+    else if(tokens[i].type==')') {match--;}
+    else {continue;}
+
+    if(match==0 && i==q){return true;}
+  }
+
+}
+//计算传入的表达式
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
-
   /* TODO: 插入代码以评估表达式 */
-  TODO();
+  
 
   return 0;
 }
+
