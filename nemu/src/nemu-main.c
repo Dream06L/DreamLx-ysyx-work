@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <common.h>
-
+word_t expr(char *e, bool *success);
 void init_monitor(int, char *[]);//初始化监视器
 void am_init_monitor();
 void engine_start(); //引擎启动
@@ -30,6 +30,30 @@ int main(int argc, char *argv[]) {
 
   /* Start engine. */
   engine_start();
+  FILE *fp = fopen("tools/gen-expr/input", "r");
+  assert(fp != NULL);
+  int result,res;
+  int i=0;
+  char buffer[65536+128];
+  char buff[65536];
+  bool success;
+  int some=0;
+  for(i=0;i<5000;i++){
+  if(fgets(buffer,sizeof(buffer),fp)==NULL )break;
+     // 查找并移除换行符
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';  // 将换行符替换为字符串结束符
+        } 
+  sscanf(buffer,"%u %[^\n]",&result,buff);
+  
+  res =(int)expr(buff,&success);
+   if(res==result){ some++;  
+  printf("结果%u=%u i=%d\n",result,res,i);
+   }
 
+  }
+  printf("some=%d\n",some);
+  fclose(fp);
   return is_exit_status_bad();
 }
