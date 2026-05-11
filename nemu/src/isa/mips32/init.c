@@ -40,3 +40,7 @@ void init_isa() {
   /* Initialize this virtual computer system. */
   restart();
 }
+/*在monitor初始化时调用init_isa(), 进行至少如下ISA相关的初始化工作:
+设置必要的寄存器初值, 如PC等
+加载内置客户程序
+#寄存器相关*/

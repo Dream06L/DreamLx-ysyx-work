@@ -24,7 +24,9 @@ static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
-
+void deletewp(int n);
+void creatwp(char *wwhat);
+void printwp();
 /* 我们使用 `readline` 库来提供从标准输入读取的更多灵活性*/
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -74,20 +76,46 @@ static int cmd_info(char *args){
   
   if(subcmd=='r') isa_reg_display();
   else if(subcmd=='w')
-  {}
+  {
+    printwp();
+  }
 
   return 0;
 }
 static int cmd_x(char *args){
   if(args==NULL) return 0;
-
+  bool success;
   int n=0,i=0;
-  word_t expr;
-  sscanf(args,"%d %x",&n,&expr);
+  char exprbuf[65500];
+  word_t expr_res;
+  sscanf(args,"%d %[^\n]",&n,exprbuf);
+  expr_res =expr(exprbuf,&success);
   for(i=0;i<n;i++){
-    word_t data=vaddr_read(expr+i*4,4);
-    printf("0x%08x:   0x%08x\n",expr+i*4,data);
+    word_t data=vaddr_read(expr_res+i*4,4);//读该地址的值
+    printf("0x%08x:   0x%08x\n",expr_res+i*4,data);
   }
+  return 0;
+}
+
+static int cmd_p(char *args){
+  bool success;
+  word_t result=expr(args,&success);
+  printf(" The expression result = 0x%08x\n",result);
+
+  return 0;
+}
+static int cmd_w(char *args){
+  char exprbuf[65500];
+  sscanf(args,"%[^\n]",exprbuf);
+  
+  creatwp(exprbuf);
+  return 0;
+}
+
+static int cmd_d(char *args){
+  int N=0;
+  sscanf(args,"%d",&N);
+  deletewp(N);
   return 0;
 }
 /*----------------------------------上面是cmd函数----------------------------------------------*/
@@ -103,6 +131,9 @@ static struct {
   {"si","single stepping",cmd_si},
   {"info","print program status",cmd_info},
   {"x","scan memory",cmd_x},
+  {"p","expression evaluation",cmd_p},
+  {"w","set a watchpoint",cmd_w},
+  {"d","delete a watchpoint",cmd_d},
   /* TODO:添加更多命令 */
 
 };
@@ -165,11 +196,11 @@ void sdb_mainloop() {
     int i;
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
-        if (cmd_table[i].handler(args) < 0) { return; }
+        if (cmd_table[i].handler(args) < 0) {  return; }
         break;
       }
     }
-
+    
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
 }
@@ -178,6 +209,6 @@ void init_sdb() {
   /* 编译正则表达式. */
   init_regex();
 
-  /* Initialize the watchpoint pool. */
+  /* 初始化观察点池. */
   init_wp_pool();
 }
