@@ -46,7 +46,7 @@ static struct rule {
   {"==", TK_EQ},        // equal
   {"!=",TK_NOEQ},       //不相等
   {"&&",TK_AND},
-  {"\\$$0|\\$[a-zA-Z][a-zA-Z0-9]+",REG},//对于$0寄存器，打印它的值时也要加$,写成$$0
+  {"\\$\\$0|\\$[a-zA-Z][a-zA-Z0-9]+",REG},//对于$0寄存器，打印它的值时也要加$,写成$$0
   
 };
 
@@ -138,21 +138,7 @@ static bool make_token(char *e) {
 
 static bool check_parentheses(int p, int q){
   int i=p,match=0,flag=0;
-//--------------------------------------------
-/*printf("括号匹配p=%d,q=%d\n",p,q);
-  for(int a=p;a<=q;a++){
-    switch(tokens[a].type){
-      case TK_NUM:printf("123");
-      case '+':printf("+");
-      case '(':printf("(");
-      case ')':printf(")");
-      case '-':printf("-");
-      case '*':printf("*");
-      case '/':printf("/");
-    }
-  }
-  printf("\n");*/
-  //------------------------------------
+
   while(i<=q){
     if(tokens[i].type=='(') {match++;}
     else if(tokens[i].type==')') {match--;}
@@ -206,23 +192,23 @@ int main_operator(int p,int q){
       }
       if(i>=q){break;}//防止（）+（）这种越届
 
-/*低*/if(tokens[i].type==TK_AND)
+/*低*/ if(tokens[i].type==TK_AND)
       {god_pos=i;}
-      else if(tokens[i].type==TK_EQ || tokens[i].type==TK_NOEQ)
+        else if(tokens[i].type==TK_EQ || tokens[i].type==TK_NOEQ)
       { if(tokens[god_pos].type!=TK_AND)//如果现在的运算符比god_pos处的运算符优先级低，就把主运算符变成更低一级的
           god_pos=i;
       }
-      else if(tokens[i].type=='+' || tokens[i].type=='-')
+        else if(tokens[i].type=='+' || tokens[i].type=='-')
       { if(tokens[god_pos].type!=TK_AND && tokens[god_pos].type!=TK_EQ && tokens[god_pos].type!=TK_NOEQ)
           god_pos=i;
       }
-      else if(tokens[i].type=='*' || tokens[i].type=='/')
+        else if(tokens[i].type=='*' || tokens[i].type=='/')
       { if(tokens[god_pos].type=='*' || tokens[god_pos].type=='/' || tokens[god_pos].type==DEREF ||tokens[god_pos].type==NEGATIVE)
           god_pos=i;
       }
-/*低*/else if(tokens[i].type==DEREF&&tokens[god_pos].type==NEGATIVE){
+        else if(tokens[i].type==DEREF&&tokens[god_pos].type==NEGATIVE){
         god_pos=i;
-      }
+      } /*高*/
 
   }
 
@@ -235,15 +221,17 @@ word_t eval(int p,int q) {
     Assert(0,"Bad expression\n");
   }
   else if (p == q) {
-    word_t a_num;//参与运算的数字
+    word_t a_num=0;//参与运算的数字
     if(tokens[p].type==REG){
       char tem_str[32];//用来放reg名字
       bool succ;
       sprintf(tem_str,"%s",tokens[p].str+1);
       a_num = isa_reg_str2val(tem_str, &succ);
       Assert(succ==true,"找不到该寄存器");
-    }else{
+    }else if(tokens[p].type==TK_HEX || tokens[p].type==TK_NUM){
     sscanf(tokens[p].str,"%i",&a_num);
+    }else {
+      Assert(0,"Bad expression\n");
     }
     return a_num;
   }
