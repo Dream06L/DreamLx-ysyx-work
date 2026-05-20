@@ -22,9 +22,9 @@
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
 #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
 
-/* convert the guest physical address in the guest program to host virtual address in NEMU */
+/* 在 NEMU 中将客户机程序中的客户机物理地址转换为主机虚拟地址 */
 uint8_t* guest_to_host(paddr_t paddr);
-/* convert the host virtual address in NEMU to guest physical address in the guest program */
+/* 将 NEMU 中的主机虚拟地址转换为客户机程序中的客户机物理地址 */
 paddr_t host_to_guest(uint8_t *haddr);
 
 static inline bool in_pmem(paddr_t addr) {

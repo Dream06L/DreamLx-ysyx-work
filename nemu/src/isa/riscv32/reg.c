@@ -24,8 +24,32 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+  int i=0;
+  while (i<32)
+  {
+    printf("%-5s  0x%08x\n",regs[i],gpr(i));
+    i++;
+  }
+  
+  
+  
 }
 
+//根据寄存器名称字符串获取对应的值
 word_t isa_reg_str2val(const char *s, bool *success) {
+  int i=0;
+  while (i<32)
+  {
+    if(strcmp(regs[i],s)==0){
+      *success=true;
+      return gpr(i);//获取第 i 个通用寄存器的值并返回
+    }
+    i++;
+  }
+  if(strcmp(s,"pc")==0){
+    *success=true;
+    return cpu.pc;
+  }
+  *success=false;
   return 0;
 }

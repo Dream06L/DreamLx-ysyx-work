@@ -12,19 +12,21 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
-
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-
+#include <utils.h>
+#include <memory/vaddr.h> //读写内存
 static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
-
-/* We use the `readline' library to provide more flexibility to read from stdin. */
+void deletewp(int n);
+void creatwp(char *wwhat);
+void printwp();
+/* 我们使用 `readline` 库来提供从标准输入读取的更多灵活性*/
 static char* rl_gets() {
   static char *line_read = NULL;
 
@@ -41,41 +43,109 @@ static char* rl_gets() {
 
   return line_read;
 }
+/*----------------------------------------下面是cmd函数-------------------------------------------*/
 
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
 }
 
-
 static int cmd_q(char *args) {
+  nemu_state.state=NEMU_QUIT;
   return -1;
 }
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args){
+  int n;
+  if(args==NULL) n=1;
+  else{
+    sscanf(args,"%d",&n);
+  }
+  cpu_exec(n);
+  return 0;
+}
+
+static int cmd_info(char *args){
+  if(args==NULL) return 0;
+
+  char subcmd;
+  sscanf(args,"%c",&subcmd);
+  
+  if(subcmd=='r') isa_reg_display();
+  else if(subcmd=='w')
+  {
+    printwp();
+  }
+
+  return 0;
+}
+static int cmd_x(char *args){
+  if(args==NULL) return 0;
+  bool success;
+  int n=0,i=0;
+  char exprbuf[65500];
+  word_t expr_res;
+  sscanf(args,"%d %[^\n]",&n,exprbuf);
+  expr_res =expr(exprbuf,&success);
+  for(i=0;i<n;i++){
+    word_t data=vaddr_read(expr_res+i*4,4);//读该地址的值
+    printf("0x%08x:   0x%08x\n",expr_res+i*4,data);
+  }
+  return 0;
+}
+
+static int cmd_p(char *args){
+  bool success;
+  word_t result=expr(args,&success);
+  printf(" The expression result = 0x%08x\n",result);
+
+  return 0;
+}
+static int cmd_w(char *args){
+  char exprbuf[65500];
+  sscanf(args,"%[^\n]",exprbuf);
+  
+  creatwp(exprbuf);
+  return 0;
+}
+
+static int cmd_d(char *args){
+  int N=0;
+  sscanf(args,"%d",&N);
+  deletewp(N);
+  return 0;
+}
+/*----------------------------------上面是cmd函数----------------------------------------------*/
+
 static struct {
-  const char *name;
-  const char *description;
-  int (*handler) (char *);
+  const char *name;//命令名字
+  const char *description;//命令描述
+  int (*handler) (char *);//命令对应的函数指针
 } cmd_table [] = {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
+  {"si","single stepping",cmd_si},
+  {"info","print program status",cmd_info},
+  {"x","scan memory",cmd_x},
+  {"p","expression evaluation",cmd_p},
+  {"w","set a watchpoint",cmd_w},
+  {"d","delete a watchpoint",cmd_d},
+  /* TODO:添加更多命令 */
 
 };
 
 #define NR_CMD ARRLEN(cmd_table)
 
 static int cmd_help(char *args) {
-  /* extract the first argument */
+  /* 提取第一个参数 */
   char *arg = strtok(NULL, " ");
   int i;
 
   if (arg == NULL) {
-    /* no argument given */
+    /* 没有提供参数 */
     for (i = 0; i < NR_CMD; i ++) {
       printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
     }
@@ -105,14 +175,14 @@ void sdb_mainloop() {
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 
-    /* extract the first token as the command */
+    /* 提取第一个标记作为命令 */
     char *cmd = strtok(str, " ");
     if (cmd == NULL) { continue; }
 
-    /* treat the remaining string as the arguments,
-     * which may need further parsing
+    /* 将剩余的字符串视为参数,
+     * 可能需要进一步解析
      */
-    char *args = cmd + strlen(cmd) + 1;
+    char *args = cmd + strlen(cmd) + 1;//参数
     if (args >= str_end) {
       args = NULL;
     }
@@ -125,19 +195,19 @@ void sdb_mainloop() {
     int i;
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
-        if (cmd_table[i].handler(args) < 0) { return; }
+        if (cmd_table[i].handler(args) < 0) {  return; }
         break;
       }
     }
-
+    
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
 }
 
 void init_sdb() {
-  /* Compile the regular expressions. */
+  /* 编译正则表达式. */
   init_regex();
 
-  /* Initialize the watchpoint pool. */
+  /* 初始化观察点池. */
   init_wp_pool();
 }

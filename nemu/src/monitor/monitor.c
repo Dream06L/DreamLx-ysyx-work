@@ -32,8 +32,8 @@ static void welcome() {
   Log("Build time: %s, %s", __TIME__, __DATE__);
   printf("Welcome to %s-NEMU!\n", ANSI_FMT(str(__GUEST_ISA__), ANSI_FG_YELLOW ANSI_BG_RED));
   printf("For help, type \"help\"\n");
-  Log("Exercise: Please remove me in the source code and compile NEMU again.");
-  assert(0);
+
+
 }
 
 #ifndef CONFIG_TARGET_AM
@@ -67,7 +67,7 @@ static long load_img() {
   fclose(fp);
   return size;
 }
-
+//解析参数
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
@@ -99,38 +99,38 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 void init_monitor(int argc, char *argv[]) {
-  /* Perform some global initialization. */
+  /* 执行一些全局初始化 */
 
-  /* Parse arguments. */
+  /* 解析参数 */
   parse_args(argc, argv);
 
-  /* Set random seed. */
+  /* 设置随机种子. */
   init_rand();
 
-  /* Open the log file. */
+  /* 打开日志文件 */
   init_log(log_file);
 
-  /* Initialize memory. */
+  /* 初始化内存 */
   init_mem();
 
-  /* Initialize devices. */
+  /*初始化设备 */
   IFDEF(CONFIG_DEVICE, init_device());
 
-  /* Perform ISA dependent initialization. */
+  /*执行 ISA 相关的初始化 */
   init_isa();
 
-  /* Load the image to memory. This will overwrite the built-in image. */
+  /* 将图像加载到内存 这将覆盖内置图像 */
   long img_size = load_img();
 
-  /* Initialize differential testing. */
+  /* 初始化差分测试*/
   init_difftest(diff_so_file, img_size, difftest_port);
 
-  /* Initialize the simple debugger. */
+  /* 初始化简单调试器 */
   init_sdb();
 
   IFDEF(CONFIG_ITRACE, init_disasm());
 
-  /* Display welcome message. */
+  /* 显示欢迎信息. */
   welcome();
 }
 #else // CONFIG_TARGET_AM
