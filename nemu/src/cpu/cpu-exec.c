@@ -44,14 +44,26 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif  
 }
 
+char* ring[16]={};
+
+static void enterring(char *t){
+  int i;
+  for(i=15;i>0;i--)
+    ring[i]=ring[i-1];
+
+  ring[0]=t;//入缓冲区
+}
+
+
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
   isa_exec_once(s);//指令执行一次
   cpu.pc = s->dnpc;
-#ifdef CONFIG_ITRACE
+
+#ifdef CONFIG_ITRACE//itrace
   char *p = s->logbuf;
-  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
+  p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//打印pc地址
   int ilen = s->snpc - s->pc;
   int i;
   uint8_t *inst = (uint8_t *)&s->isa.inst;
@@ -61,17 +73,18 @@ static void exec_once(Decode *s, vaddr_t pc) {
   for (i = ilen - 1; i >= 0; i --) {
 #endif
     p += snprintf(p, 4, " %02x", inst[i]);
-  }
+  }//小端，倒叙打印具体指令
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
   if (space_len < 0) space_len = 0;
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-
+//反汇编
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
+  enterring(p);
 #endif
 }
 
@@ -102,7 +115,7 @@ void assert_fail_msg() {
 
 /* 模拟 CPU 的工作方式 */
 void cpu_exec(uint64_t n) {
-  g_print_step = (n < MAX_INST_TO_PRINT);
+  g_print_step = (n < MAX_INST_TO_PRINT);//设置是否是单步执行状态
   switch (nemu_state.state) {
     case NEMU_END: case NEMU_ABORT: case NEMU_QUIT:
       printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
