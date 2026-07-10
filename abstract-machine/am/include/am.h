@@ -43,32 +43,32 @@ typedef struct {
 extern "C" {
 #endif
 
-// ----------------------- TRM: Turing Machine -----------------------
+// ----------------------- TRM：图灵机-----------------------
 extern   Area        heap;
 void     putch       (char ch);
 void     halt        (int code) __attribute__((__noreturn__));
 
-// -------------------- IOE: Input/Output Devices --------------------
+// -------------------- 输入输出设备-------------------
 bool     ioe_init    (void);
 void     ioe_read    (int reg, void *buf);
 void     ioe_write   (int reg, void *buf);
 #include "amdev.h"
 
-// ---------- CTE: Interrupt Handling and Context Switching ----------
+// ---------- CTE：中断处理与上下文切换----------
 bool     cte_init    (Context *(*handler)(Event ev, Context *ctx));
 void     yield       (void);
 bool     ienabled    (void);
 void     iset        (bool enable);
 Context *kcontext    (Area kstack, void (*entry)(void *), void *arg);
 
-// ----------------------- VME: Virtual Memory -----------------------
+// ----------------------- VME：虚拟内存-----------------------
 bool     vme_init    (void *(*pgalloc)(int), void (*pgfree)(void *));
 void     protect     (AddrSpace *as);
 void     unprotect   (AddrSpace *as);
 void     map         (AddrSpace *as, void *vaddr, void *paddr, int prot);
 Context *ucontext    (AddrSpace *as, Area kstack, void *entry);
 
-// ---------------------- MPE: Multi-Processing ----------------------
+// ---------------------- MPE：多重处理 ----------------------
 bool     mpe_init    (void (*entry)());
 int      cpu_count   (void);
 int      cpu_current (void);

@@ -33,7 +33,7 @@ input [WIDTH-1:0] din,
 output reg [WIDTH-1:0] dout,
 input wen
 );
-always @(posedge clk) begin
+always @(posedge clk or rst) begin
 if (rst) dout <= RESET_VAL;
 else if (wen) dout <= din;
 end

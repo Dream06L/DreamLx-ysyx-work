@@ -3,7 +3,7 @@
 
 #include <klib-macros.h>
 
-#include ISA_H // the macro `ISA_H` is defined in CFLAGS
+#include ISA_H // 宏 `ISA H` 在 CFLAGS 中定义
                // it will be expanded as "x86/x86.h", "mips/mips32.h", ...
 
 #if defined(__ISA_X86__)

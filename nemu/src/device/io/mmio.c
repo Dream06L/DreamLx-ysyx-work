@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "common.h"
 #include <device/map.h>
 #include <memory/paddr.h>
 
@@ -53,11 +54,15 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
   nr_map ++;
 }
 
-/* bus interface */
+/*总线接口*/
 word_t mmio_read(paddr_t addr, int len) {
-  return map_read(addr, len, fetch_mmio_map(addr));
+  word_t t=map_read(addr, len, fetch_mmio_map(addr));
+  
+  
+  return t;
 }
 
 void mmio_write(paddr_t addr, int len, word_t data) {
+  
   map_write(addr, len, data, fetch_mmio_map(addr));
 }

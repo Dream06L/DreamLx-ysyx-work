@@ -44,15 +44,15 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif  
 }
 
-char* ring[16]={};
+//char* ring[16]={};//环形缓冲区
 
-static void enterring(char *t){
+/*static void enterring(char *t){
   int i;
   for(i=15;i>0;i--)
     ring[i]=ring[i-1];
 
   ring[0]=t;//入缓冲区
-}
+}*/
 
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -84,7 +84,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
-  enterring(p);
+  enterring(p);//将反汇编结果进入指令环形缓冲区
 #endif
 }
 
