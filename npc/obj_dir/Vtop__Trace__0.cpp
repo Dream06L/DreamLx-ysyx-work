@@ -393,16 +393,11 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
         bufp->chgIData(oldp+202,(vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__data_list[3]),32);
         bufp->chgIData(oldp+203,(vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__lut_out),32);
         bufp->chgBit(oldp+204,(vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__hit));
-        __Vtemp_13[0U] = (IData)((0x400000000ULL | (QData)((IData)(
-                                                                   (0xfffffffcU 
-                                                                    & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi)))));
-        __Vtemp_13[1U] = ((0xfffffc00U & (vlSelfRef.top__DOT__inst_exu__DOT__sum_addi 
-                                          << 8U)) | (IData)(
-                                                            ((0x400000000ULL 
-                                                              | (QData)((IData)(
-                                                                                (0xfffffffcU 
-                                                                                & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi)))) 
-                                                             >> 0x20U)));
+        __Vtemp_13[0U] = (IData)((0x400000000ULL | (QData)((IData)(vlSelfRef.top__DOT__inst_exu__DOT__sum_addi))));
+        __Vtemp_13[1U] = ((vlSelfRef.top__DOT__inst_exu__DOT__sum_addi 
+                           << 8U) | (IData)(((0x400000000ULL 
+                                              | (QData)((IData)(vlSelfRef.top__DOT__inst_exu__DOT__sum_addi))) 
+                                             >> 0x20U)));
         __Vtemp_13[2U] = (0x800U | (vlSelfRef.top__DOT__inst_exu__DOT__sum_addi 
                                     >> 0x18U));
         bufp->chgWData(oldp+205,(__Vtemp_13),80);

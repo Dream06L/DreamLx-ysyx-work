@@ -19,8 +19,8 @@ module exu(
     assign sum_add=rdata1+rdata2;
     assign lw_result = (rdata1+imm)&32'hfffffffc;
     assign lbu_result = (rdata1+imm)&32'hfffffffc;
-    assign sw_result = (rdata1+imm)&32'hfffffffc;
-    assign sb_result = (rdata1+imm)&32'hfffffffc;
+    assign sw_result = (rdata1+imm);
+    assign sb_result = (rdata1+imm);
 
     wire [31:0]t;
     assign t=rdata1+imm;

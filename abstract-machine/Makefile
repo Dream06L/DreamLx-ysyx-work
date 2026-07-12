@@ -7,16 +7,16 @@ html:
 
 ## 1. Basic Setup and Checks
 
-### Default to create a bare-metal kernel image
+### 默认创建裸机内核映像
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
-### Override checks when `make clean/clean-all/html`
+### 在 `make clean clean all html` 时覆盖检查
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
-### Print build info message
+###打印构建信息消息
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
@@ -43,14 +43,14 @@ endif
 ### Checks end here
 endif
 
-## 2. General Compilation Targets
+## 2. 通用编译目标
 
-### Create the destination directory (`build/$ARCH`)
+### 创建目标目录（`build $ARCH`）
 WORK_DIR  = $(shell pwd)
 DST_DIR   = $(WORK_DIR)/build/$(ARCH)
 $(shell mkdir -p $(DST_DIR))
 
-### Compilation targets (a binary image or archive)
+### 编译目标（二进制镜像或归档）
 IMAGE_REL = build/$(NAME)-$(ARCH)
 IMAGE     = $(abspath $(IMAGE_REL))
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a

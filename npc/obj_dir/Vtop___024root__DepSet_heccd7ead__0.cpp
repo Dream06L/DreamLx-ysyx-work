@@ -1080,11 +1080,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         = (0x2000000000ULL | (QData)((IData)((0xfffffffcU 
                                               & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi))));
     vlSelfRef.top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__pair_list[0U] 
-        = (0x400000000ULL | (QData)((IData)((0xfffffffcU 
-                                             & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi))));
+        = (0x400000000ULL | (QData)((IData)(vlSelfRef.top__DOT__inst_exu__DOT__sum_addi)));
     vlSelfRef.top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__pair_list[1U] 
-        = (0x800000000ULL | (QData)((IData)((0xfffffffcU 
-                                             & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi))));
+        = (0x800000000ULL | (QData)((IData)(vlSelfRef.top__DOT__inst_exu__DOT__sum_addi)));
     vlSelfRef.top__DOT__instfu__DOT__d = ((IData)(vlSelfRef.isjump)
                                            ? (0xfffffffeU 
                                               & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi)
@@ -1147,9 +1145,9 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     vlSelfRef.top__DOT__inst_exu__DOT__raddrMMux__DOT__i0__DOT__data_list[1U] 
         = (0xfffffffcU & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi);
     vlSelfRef.top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__data_list[0U] 
-        = (0xfffffffcU & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi);
+        = vlSelfRef.top__DOT__inst_exu__DOT__sum_addi;
     vlSelfRef.top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__data_list[1U] 
-        = (0xfffffffcU & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi);
+        = vlSelfRef.top__DOT__inst_exu__DOT__sum_addi;
     vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__lut_out 
         = ((- (IData)(((IData)(vlSelfRef.top__DOT__is_what) 
                        == vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__key_list

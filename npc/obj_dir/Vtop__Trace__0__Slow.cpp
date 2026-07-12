@@ -109,8 +109,8 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBus(c+172,0,"sum_add",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+173,0,"lw_result",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+173,0,"lbu_result",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
-    tracep->declBus(c+173,0,"sw_result",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
-    tracep->declBus(c+173,0,"sb_result",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
+    tracep->declBus(c+170,0,"sw_result",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
+    tracep->declBus(c+170,0,"sb_result",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->declBus(c+170,0,"t",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
     tracep->pushPrefix("maskmux", VerilatedTracePrefixType::SCOPE_MODULE);
     tracep->declBus(c+447,0,"NR_KEY",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::PARAMETER, VerilatedTraceSigType::LOGIC, false,-1, 31,0);
@@ -1099,16 +1099,11 @@ VL_ATTR_COLD void Vtop___024root__trace_full_0_sub_0(Vtop___024root* vlSelf, Ver
     bufp->fullIData(oldp+203,(vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__data_list[3]),32);
     bufp->fullIData(oldp+204,(vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__lut_out),32);
     bufp->fullBit(oldp+205,(vlSelfRef.top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__hit));
-    __Vtemp_13[0U] = (IData)((0x400000000ULL | (QData)((IData)(
-                                                               (0xfffffffcU 
-                                                                & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi)))));
-    __Vtemp_13[1U] = ((0xfffffc00U & (vlSelfRef.top__DOT__inst_exu__DOT__sum_addi 
-                                      << 8U)) | (IData)(
-                                                        ((0x400000000ULL 
-                                                          | (QData)((IData)(
-                                                                            (0xfffffffcU 
-                                                                             & vlSelfRef.top__DOT__inst_exu__DOT__sum_addi)))) 
-                                                         >> 0x20U)));
+    __Vtemp_13[0U] = (IData)((0x400000000ULL | (QData)((IData)(vlSelfRef.top__DOT__inst_exu__DOT__sum_addi))));
+    __Vtemp_13[1U] = ((vlSelfRef.top__DOT__inst_exu__DOT__sum_addi 
+                       << 8U) | (IData)(((0x400000000ULL 
+                                          | (QData)((IData)(vlSelfRef.top__DOT__inst_exu__DOT__sum_addi))) 
+                                         >> 0x20U)));
     __Vtemp_13[2U] = (0x800U | (vlSelfRef.top__DOT__inst_exu__DOT__sum_addi 
                                 >> 0x18U));
     bufp->fullWData(oldp+206,(__Vtemp_13),80);
