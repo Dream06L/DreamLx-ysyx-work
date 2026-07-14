@@ -34,7 +34,7 @@ MuxKey #(16,4,16)decd(sign,waddr[3:0],{
 });
 wire [LEN:0]out[15:0];
 
-Reg #(32,0) reg0(clk,rst,0,out[0],sign[1]&wen);
+assign out[0] = 0;
 Reg #(32,0) reg1(clk,rst,wdata,out[1],sign[1]&wen);
 Reg #(32,0) reg2(clk,rst,wdata,out[2],sign[2]&wen);
 Reg #(32,0) reg3(clk,rst,wdata,out[3],sign[3]&wen);
@@ -88,5 +88,6 @@ MuxKey #(16,4,32) mux2(rdata2,raddr2[3:0],{
     4'd14,out[14],
     4'd15,out[15]
 });
+
 endmodule //GPR
 

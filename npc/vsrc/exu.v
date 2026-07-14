@@ -17,8 +17,8 @@ module exu(
     assign jalrpc4=pc+4;
     assign lui_result=imm;
     assign sum_add=rdata1+rdata2;
-    assign lw_result = (rdata1+imm)&32'hfffffffc;
-    assign lbu_result = (rdata1+imm)&32'hfffffffc;
+    assign lw_result = (rdata1+imm);
+    assign lbu_result = (rdata1+imm);
     assign sw_result = (rdata1+imm);
     assign sb_result = (rdata1+imm);
 

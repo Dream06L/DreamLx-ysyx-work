@@ -1,7 +1,6 @@
 module top #(parameter LEN=31)(
   input clk,
   input rst,
-  input wen,
   output [31:0] ppc,
   output isjump
 );
@@ -14,12 +13,20 @@ assign isjump=is_what[6];
 PC  instfu(clk,rst,1,target,is_what[6],pc);//pc寄存器
 assign ppc=pc;
 //从存储器读指令
-import "DPI-C" function int pmem_read(input int raddr);
+import "DPI-C" function int unsigned pmem_read(input int unsigned raddr);
 
 always@(*)begin
+  inst=0;
   if(pc!=0)
   inst=pmem_read(pc);
 end
+
+/*always @(posedge clk) begin
+    if (~rst) begin
+        $display("[%t] PC=%h INST=%h is_what=%b", $time, pc, inst, is_what);
+        if (is_what[1]|is_what[0]|is_what[4]|is_what[5]|is_what[6]|is_what[7]) $display("  WB: rd=%d wdata=%h", rd, wb_data);
+    end
+end*/
 wire [1:0]min2;
 wire [31:0]rdataM,raddrM,waddrM;
 wire [3:0]wmask;

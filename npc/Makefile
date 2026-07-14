@@ -8,7 +8,7 @@ IMG ?=
 #allbin =$(shell find $(abspath ./csrc) -name "*npc.bin")
 .PHONY:all sim wave clean cleanbin
 all: sim
-vlog =-Wno-fatal		
+vlog = -Wno-style #-Wno-fatal		
 	
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!

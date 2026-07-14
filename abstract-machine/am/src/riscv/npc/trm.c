@@ -13,7 +13,7 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 
 void putch(char ch) {
   outb(0x10000000, ch);
-}从的
+}
 
 void halt(int code) {
   asm volatile("ebreak": : :"memory");

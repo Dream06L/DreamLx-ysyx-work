@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include<stdio.h>
 #include<cstdlib>
+#include <sys/time.h>
 
 #define COLOR_BLUE   "\033[1;34m"   //蓝色
 #define COLOR_RED    "\033[1;31m"   // 亮红色
@@ -16,6 +17,8 @@
 Vtop *top=nullptr;
 
 uint8_t M[1024*1024*24];//存储器
+// 在 定义全局基准时间
+static struct timeval boot_time;
 
 bool trap=false;
 extern "C" void halt(int code){
@@ -29,27 +32,34 @@ extern "C" void halt(int code){
 }
 
 extern "C" uint32_t pmem_read(uint32_t raddr) {
-  // 检查地址是否在有效范围内
-  if (raddr < 0x80000000 || raddr >= 0x80000000 + 1024*1024*24) {
-    printf("ERROR: pmem_read invalid raddr=0x%x,pc=%x\n", raddr,top->ppc);
-    return 0;
+  
+  if((raddr& ~0x3u)==0x10000004 || (raddr& ~0x3u)==0x10000008){
+    
+    struct timeval now;
+    gettimeofday(&now, NULL);//记录当前时间
+    uint64_t us = (now.tv_sec - boot_time.tv_sec) * 1000000 + (now.tv_usec - boot_time.tv_usec);
+    if((raddr& ~0x3u)==0x10000004)
+    return us;
+    else
+    return us>>32;
   }
   uint32_t offset = raddr - 0x80000000;
-  //if(raddr==)
-  //printf("ppc=%x,offset=%x,raddr=%x\n",top->ppc,offset,raddr);
+  if(offset>1024*1024*24)
+    printf("ppc=%x,offset=%x,raddr=%x\n",top->ppc,offset,raddr);
   return *(uint32_t *)&M[offset & ~0x3u];
 }
 
 extern "C" void pmem_write(int waddrn, int wdata, char wmask) {
     // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
     // // // `wmask`中每比特表示`wdata`中1个字节的掩码,
-  // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  //printf("pmemwrite():waddr=%x,wdata=%x,wmas=%x\n",waddrn,wdata,wmask);
+  // cd如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
+  //printf("pmemwrite():waddr=%x,wdata=%x,wmask=%x\n",waddrn,wdata,wmask);
   //先判断是不是设备
-  if(waddrn==portAddr){
+  if((waddrn&~0x3u)==portAddr){
+    //printf("pmemwrite():waddr=%x,wdata=%x,wmask=%x\n",waddrn,wdata,wmask);
     //printf("i get port\n");
     putchar(wdata&0xFF);
-    //fflush(stdout);
+   // fflush(stdout);
     return;
   }
 
@@ -72,7 +82,7 @@ extern "C" void pmem_write(int waddrn, int wdata, char wmask) {
     if(mask1==1)M[(waddr & ~0x3u)+1]=byte1;
     if(mask2==1)M[(waddr & ~0x3u)+2]=byte2;
     if(mask3==1)M[(waddr & ~0x3u)+3]=byte3;
-    
+    asm volatile("" ::: "memory");  // 防止编译器重排序
   
 }
 
@@ -95,21 +105,23 @@ void reset(int n) {//同步复位
 
 
 int main(int argc, char **argv){
-  printf("main():Entering main\n");
+  
+ 
   Verilated::traceEverOn(true);
   top=new Vtop;
+  gettimeofday(&boot_time, NULL);//记录启动时间
 
-    FILE* fp=fopen(argv[1],"rb");
-    printf("fopen():after fopen\n");
-    if(fp==NULL) {
-      printf("错误: 无法打开文件 %s\n", argv[1]);
-      return 1;
-    }
+  FILE* fp=fopen(argv[1],"rb");
+  printf("fopen():after fopen\n");
+  if(fp==NULL) {
+    printf("错误: 无法打开文件 %s\n", argv[1]);
+    return 1;
+  }
    
   size_t readcount = fread(M,1,1024*1024*24,fp);
   printf("fread():读完bin,%zu 个\n",readcount);
 
-    fclose(fp);
+  fclose(fp);
     
   
   // 1. 创建上下文和模块实例
@@ -121,6 +133,7 @@ int main(int argc, char **argv){
   top->trace(tfp, 99);  // 追踪深度 99
   tfp->open("wave.fst");
   int i=0;
+  
   reset(10) ;//复位10周期
 
   while (1)

@@ -4,23 +4,25 @@
 #include <stdarg.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
-
+//char backup[100];
+char out[100];
 int printf(const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  char out[4096];
+   
   int num=vsprintf(out,fmt,args);
+
   va_end(args);
-  for(int a=0;a<4096&&out[a]!=0;a++){
-  putch(out[a]);//am.h中声明
-  }
+
+  putstr(out);
+
 return num;
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
   int i=0,pos=0,full=1,wide=0;
 
-  for(i=0;i<4096&&fmt[i]!='\0';i++){
+  for(i=0;i<100&&fmt[i]!='\0';i++){
 
     if(fmt[i]=='%'){
       if(fmt[i+1]=='0'){//%+02d
@@ -60,11 +62,12 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         }
         while(end>=0)
         {
+          
           out[pos++]=str[end--];
         }
         i++;//跳过d
         full=1;
-        
+        wide=0;
        break;
       }
       case 's':{
@@ -107,7 +110,17 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
     }
     else {out[pos++]=fmt[i];}    
   }
+
   out[pos]='\0';
+  //putch(pos);
+//缓兵之计
+volatile int delay=0;
+for(int b=0;b<100;b++)
+    delay++;
+
+
+ //putstr(out);
+
   return pos;
 }
 
