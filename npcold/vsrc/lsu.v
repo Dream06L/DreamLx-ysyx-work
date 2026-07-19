@@ -28,7 +28,6 @@ MuxKey #(4,2,32) databyte(rdatabyte,min2,{
 });
 assign wmask = is_what[2]?4'b1111:wmaskin;
 assign wdata= is_what[3]?wdatabt:wdatain;
-
 MuxKey #(4,2,32) wdatabyte(wdatabt,min2,{
   2'd0,{{24{1'b0}},wdatain[7:0]},
   2'd1,{{16{1'b0}},wdatain[7:0],{8{1'b0}}},
@@ -36,14 +35,16 @@ MuxKey #(4,2,32) wdatabyte(wdatabt,min2,{
   2'd3,{wdatain[7:0],{24{1'b0}}}
 });
 always @(*) begin
-  rdata = 0;
   if (readen) begin // 有读请求时
     rdata = pmem_read(raddr);
     end
-  if (wen) begin // 有写请求时
+    else if (wen) begin // 有写请求时
       pmem_write(waddr, wdata, {4'b0000,wmask});
+      rdata = 0;
     end
-  
+  else begin
+    rdata = 0;
+  end
 end
 assign rdataM= is_what[5] ? rdata :(is_what[4]? rdatabyte :0);
 

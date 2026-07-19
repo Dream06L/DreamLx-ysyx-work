@@ -112,14 +112,16 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   }
 
   out[pos]='\0';
+
   //putch(pos);
 //缓兵之计
+/*
 volatile int delay=0;
 for(int b=0;b<100;b++)
     delay++;
+*/
 
-
- //putstr(out);
+  //putstr(out);
 
   return pos;
 }

@@ -27,7 +27,7 @@ static const uint32_t img [] = {
 };
 
 static void restart() {
-  /* 设置初始程序计数器 */
+  /* 设置程序计数器初值 */
   cpu.pc = RESET_VECTOR;
 
   /* 零寄存器始终为0 */
@@ -38,6 +38,6 @@ void init_isa() {
   /* 加载内置图像 */
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
-  /* 初始化这个虚拟计算机系统 */
+  /* 初始化寄存器 */
   restart();
 }

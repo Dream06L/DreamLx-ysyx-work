@@ -16,7 +16,7 @@
 #define portAddr 0x10000000
 Vtop *top=nullptr;
 
-volatile uint8_t M[1024*1024*24];//存储器
+uint8_t M[1024*1024*24];//存储器
 // 在 定义全局基准时间
 static struct timeval boot_time;
 
@@ -32,8 +32,7 @@ extern "C" void halt(int code){
 }
 
 extern "C" uint32_t pmem_read(uint32_t raddr) {
-  if(top->rst)return 0;
-
+  
   if((raddr& ~0x3u)==0x10000004 || (raddr& ~0x3u)==0x10000008){
     
     struct timeval now;
@@ -56,8 +55,6 @@ extern "C" void pmem_write(int waddrn, int wdata, char wmask) {
     // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`
     // // // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // cd如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-
-  if(top->rst)return ;
   //printf("pmemwrite():waddr=%x,wdata=%x,wmask=%x\n",waddrn,wdata,wmask);
   //先判断是不是设备
   if((waddrn&~0x3u)==portAddr){
@@ -68,7 +65,6 @@ extern "C" void pmem_write(int waddrn, int wdata, char wmask) {
     return;
   }else if(waddrn<0x80000000){
     printf("pmemwrite():waddr=%x,wdata=%x,wmask=%x\n",waddrn,wdata,wmask);}
-
 
   uint32_t waddr;
   if(waddrn>0x80000000)
@@ -101,13 +97,12 @@ void single_cycle(){
 
 }
 
-void reset() {//复位
-  
+void reset(int n) {//同步复位
   top->rst = 1;
   printf("rst=%d\n",top->rst);
-  single_cycle();
+  while (n -- > 0) single_cycle();
+  printf("init ppc=%x\n",top->ppc);
   top->rst = 0;
-   printf("init ppc=%x\n",top->ppc);
 }
 
 
@@ -126,7 +121,7 @@ int main(int argc, char **argv){
     return 1;
   }
    
-  size_t readcount = fread((void*)M,1,1024*1024*24,fp);
+  size_t readcount = fread(M,1,1024*1024*24,fp);
   printf("fread():读完bin,%zu 个\n",readcount);
 
   fclose(fp);
@@ -142,14 +137,14 @@ int main(int argc, char **argv){
   tfp->open("wave.fst");
   int i=0;
   
-  reset() ;//复位
+  reset(10) ;//复位10周期
 
   while (1)
   {
     
     if(trap){break;}
   
-    //printf("i=%d,pc=0x%x,isjump=%d,inst=%08x\n",i,top->ppc,top->isjump,pmem_read(top->ppc));
+    //printf("i=%d,pc=0x%x,isjump=%d,inst=%x\n",i,top->ppc,top->isjump,pmem_read(top->ppc));
     //if(i==10)break;
     single_cycle();
     //tfp->dump(Verilated::time());  // 写入波形

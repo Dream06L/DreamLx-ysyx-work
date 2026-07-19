@@ -6,14 +6,14 @@
 #include "Vtop__Syms.h"
 #include "Vtop___024root.h"
 
-extern "C" int pmem_read(int raddr);
+extern "C" unsigned int pmem_read(unsigned int raddr);
 
 VL_INLINE_OPT void Vtop___024root____Vdpiimwrap_top__DOT__pmem_read_TOP(IData/*31:0*/ raddr, IData/*31:0*/ &pmem_read__Vfuncrtn) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root____Vdpiimwrap_top__DOT__pmem_read_TOP\n"); );
     // Body
-    int raddr__Vcvt;
+    unsigned int raddr__Vcvt;
     for (size_t raddr__Vidx = 0; raddr__Vidx < 1; ++raddr__Vidx) raddr__Vcvt = raddr;
-    int pmem_read__Vfuncrtn__Vcvt;
+    unsigned int pmem_read__Vfuncrtn__Vcvt;
     pmem_read__Vfuncrtn__Vcvt = pmem_read(raddr__Vcvt);
     pmem_read__Vfuncrtn = pmem_read__Vfuncrtn__Vcvt;
 }
@@ -53,7 +53,10 @@ void Vtop___024root___eval_triggers__act(Vtop___024root* vlSelf) {
     // Body
     vlSelfRef.__VactTriggered.setBit(0U, ((IData)(vlSelfRef.clk) 
                                           & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))));
+    vlSelfRef.__VactTriggered.setBit(1U, ((IData)(vlSelfRef.rst) 
+                                          & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__rst__0))));
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
+    vlSelfRef.__Vtrigprevexpr___TOP__rst__0 = vlSelfRef.rst;
 #ifdef VL_DEBUG
     if (VL_UNLIKELY(vlSymsp->_vm_contextp__->debug())) {
         Vtop___024root___dump_triggers__act(vlSelf);

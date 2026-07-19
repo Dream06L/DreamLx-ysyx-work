@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   
   /* Start engine. */
   engine_start();
-  /*
+/*
   FILE *fp = fopen("tools/gen-expr/input", "r");
   assert(fp != NULL);
   int result,res;
@@ -57,6 +57,6 @@ int main(int argc, char *argv[]) {
   }
   printf("some=%d\n",some);
   fclose(fp);
-  */
+*/
   return is_exit_status_bad();
 }

@@ -42,7 +42,7 @@ module exu(
     8'b00100000,lw_result,//lw
     8'b00010000,lbu_result//lbu
 
-    });//房村地址
+    });
      MuxKeyWithDefault #(2,8,32) waddrMMux(waddrM,is_what,0,{
 
     8'b00001000,sb_result,//sb

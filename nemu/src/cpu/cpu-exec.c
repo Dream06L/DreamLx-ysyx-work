@@ -18,10 +18,11 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 void Scan_watchpoints();
-/* The assembly code of instructions executed is only output to the screen
- * when the number of instructions executed is less than this value.
- * This is useful when you use the `si' command.
- * You can modify this value as you want.
+
+/* 执行的指令的汇编代码仅在屏幕上输出
+* 当执行的指令数量少于此值时
+* 当您使用 `si` 命令时，这很有用
+* 您可以根据需要修改此值
  */
 #define MAX_INST_TO_PRINT 10
 
@@ -33,9 +34,11 @@ static bool g_print_step = false;
 void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
+
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
@@ -44,16 +47,20 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif  
 }
 
-//char* ring[16]={};//环形缓冲区
+char* ring[16]={};//环形缓冲区
 
-/*static void enterring(char *t){
+static void enter_ring(char *t){
   int i;
   for(i=15;i>0;i--)
     ring[i]=ring[i-1];
 
   ring[0]=t;//入缓冲区
-}*/
-
+}
+// static void print_ring(){
+//   for(int i=0;i<16;i++)
+//     if(ring[i]!=NULL)
+//       printf("%s\n",ring[i]);
+// }
 
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
@@ -84,7 +91,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst, ilen);
-  enterring(p);//将反汇编结果进入指令环形缓冲区
+  enter_ring(p);//将反汇编结果进入指令环形缓冲区
 #endif
 }
 
@@ -125,7 +132,7 @@ void cpu_exec(uint64_t n) {
 
   uint64_t timer_start = get_time();
 
-  execute(n);//执行
+  execute(n);//执行n次
 
   uint64_t timer_end = get_time();
   g_timer += timer_end - timer_start;
