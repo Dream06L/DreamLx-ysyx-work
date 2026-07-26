@@ -46,7 +46,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   Scan_watchpoints();//扫描监视点
 #endif  
 }
-
+#ifdef CONFIG_ITRACE
 char* ring[16]={};//环形缓冲区
 
 static void enter_ring(char *t){
@@ -56,12 +56,13 @@ static void enter_ring(char *t){
 
   ring[0]=t;//入缓冲区
 }
+
 // static void print_ring(){
 //   for(int i=0;i<16;i++)
 //     if(ring[i]!=NULL)
 //       printf("%s\n",ring[i]);
 // }
-
+#endif
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;

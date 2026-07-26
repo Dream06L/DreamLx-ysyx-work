@@ -4,7 +4,7 @@
 #include <stdarg.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
-//char backup[100];
+
 char out[100];
 int printf(const char *fmt, ...) {
   va_list args;
@@ -113,16 +113,16 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 
   out[pos]='\0';
 
-  //putch(pos);
+  
 //缓兵之计
-/*
+
 volatile int delay=0;
-for(int b=0;b<100;b++)
+for(int b=0;b<91;b++)
     delay++;
-*/
+
 
   //putstr(out);
-
+  
   return pos;
 }
 

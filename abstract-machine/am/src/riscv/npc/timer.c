@@ -1,6 +1,6 @@
 #include <am.h>
 #include "../riscv.h"
-#define npc_RTC_ADDR 0x10000004
+#define npc_RTC_ADDR 0x10000040
 void __am_timer_init() {
 }
 

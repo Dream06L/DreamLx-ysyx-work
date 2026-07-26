@@ -20,7 +20,7 @@ extern "C" {
     extern void halt(int code);
     // DPI import at /home/lx02/ysyx-workbench/npc/vsrc/top.v:16:38
     extern unsigned int pmem_read(unsigned int raddr);
-    // DPI import at /home/lx02/ysyx-workbench/npc/vsrc/lsu.v:17:30
+    // DPI import at /home/lx02/ysyx-workbench/npc/vsrc/lsu.v:16:30
     extern void pmem_write(int waddr, int wdata, char wmask);
 
 #ifdef __cplusplus

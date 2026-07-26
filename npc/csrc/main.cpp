@@ -14,6 +14,7 @@
 #define COLOR_RED    "\033[1;31m"   // 亮红色
 #define COLOR_RESET  "\033[0m"
 #define portAddr 0x10000000
+#define npc_RTC_ADDR 0x10000040
 Vtop *top=nullptr;
 
 volatile uint8_t M[1024*1024*24];//存储器
@@ -34,12 +35,12 @@ extern "C" void halt(int code){
 extern "C" uint32_t pmem_read(uint32_t raddr) {
   if(top->rst)return 0;
 
-  if((raddr& ~0x3u)==0x10000004 || (raddr& ~0x3u)==0x10000008){
+  if((raddr& ~0x3u)==npc_RTC_ADDR || (raddr& ~0x3u)==npc_RTC_ADDR+4){
     
     struct timeval now;
     gettimeofday(&now, NULL);//记录当前时间
     uint64_t us = (now.tv_sec - boot_time.tv_sec) * 1000000 + (now.tv_usec - boot_time.tv_usec);
-    if((raddr& ~0x3u)==0x10000004)
+    if((raddr& ~0x3u)==npc_RTC_ADDR)
     return us;
     else
     return us>>32;
@@ -58,9 +59,13 @@ extern "C" void pmem_write(int waddrn, int wdata, char wmask) {
   // cd如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
 
   if(top->rst)return ;
+   //static int scnt = 0;
+   bool is_serial = ((waddrn & ~0x3u) == portAddr);
+   //fprintf(stderr, "[STORE #%d] waddr=%08x wdata=%08x wmask=%02x %s\n",
+    //      scnt++, waddrn, wdata, (unsigned char)wmask, is_serial ? "<SERIAL>" : "");
   //printf("pmemwrite():waddr=%x,wdata=%x,wmask=%x\n",waddrn,wdata,wmask);
   //先判断是不是设备
-  if((waddrn&~0x3u)==portAddr){
+  if(is_serial ){
     //printf("pmemwrite():waddr=%x,wdata=%x,wmask=%x\n",waddrn,wdata,wmask);
     //printf("i get port\n");
     putchar(wdata&0xFF);
@@ -147,11 +152,12 @@ int main(int argc, char **argv){
   while (1)
   {
     
+   
     if(trap){break;}
-  
     //printf("i=%d,pc=0x%x,isjump=%d,inst=%08x\n",i,top->ppc,top->isjump,pmem_read(top->ppc));
     //if(i==10)break;
     single_cycle();
+     
     //tfp->dump(Verilated::time());  // 写入波形
     i++;
   }

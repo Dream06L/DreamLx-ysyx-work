@@ -30,6 +30,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         CData/*0:0*/ top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__hit;
         CData/*0:0*/ top__DOT__inst_exu__DOT__raddrMMux__DOT__i0__DOT__hit;
         CData/*0:0*/ top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__hit;
+        CData/*3:0*/ top__DOT__inst_store__DOT__r_wmask;
+        CData/*0:0*/ top__DOT__inst_store__DOT__r_wen;
+        CData/*0:0*/ top__DOT__inst_store__DOT__r_readen;
         CData/*0:0*/ top__DOT__inst_store__DOT__databyte__DOT__i0__DOT__hit;
         CData/*0:0*/ top__DOT__inst_store__DOT__wdatabyte__DOT__i0__DOT__hit;
         CData/*0:0*/ __VdfgRegularize_hd87f99a1_0_1;
@@ -58,6 +61,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         IData/*31:0*/ top__DOT__inst_store__DOT__rdata;
         IData/*31:0*/ top__DOT__inst_store__DOT__rdatabyte;
         IData/*31:0*/ top__DOT__inst_store__DOT__wdatabt;
+        IData/*31:0*/ top__DOT__inst_store__DOT__r_raddr;
+        IData/*31:0*/ top__DOT__inst_store__DOT__r_waddr;
+        IData/*31:0*/ top__DOT__inst_store__DOT__r_wdata;
         IData/*31:0*/ top__DOT__inst_store__DOT__databyte__DOT__i0__DOT__lut_out;
         IData/*31:0*/ top__DOT__inst_store__DOT__wdatabyte__DOT__i0__DOT__lut_out;
         IData/*31:0*/ __VdfgRegularize_hd87f99a1_0_9;
@@ -68,11 +74,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         VlUnpacked<QData/*39:0*/, 7> top__DOT__inst_du__DOT__immMux__DOT__i0__DOT__pair_list;
         VlUnpacked<CData/*7:0*/, 7> top__DOT__inst_du__DOT__immMux__DOT__i0__DOT__key_list;
         VlUnpacked<IData/*31:0*/, 7> top__DOT__inst_du__DOT__immMux__DOT__i0__DOT__data_list;
+        VlUnpacked<IData/*31:0*/, 32> top__DOT__u_gpr__DOT__rf;
         VlUnpacked<CData/*5:0*/, 4> top__DOT__inst_exu__DOT__maskmux__DOT__i0__DOT__pair_list;
         VlUnpacked<CData/*1:0*/, 4> top__DOT__inst_exu__DOT__maskmux__DOT__i0__DOT__key_list;
         VlUnpacked<CData/*3:0*/, 4> top__DOT__inst_exu__DOT__maskmux__DOT__i0__DOT__data_list;
         VlUnpacked<QData/*39:0*/, 4> top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__pair_list;
         VlUnpacked<CData/*7:0*/, 4> top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__key_list;
+    };
+    struct {
         VlUnpacked<IData/*31:0*/, 4> top__DOT__inst_exu__DOT__resultMux__DOT__i0__DOT__data_list;
         VlUnpacked<QData/*39:0*/, 2> top__DOT__inst_exu__DOT__raddrMMux__DOT__i0__DOT__pair_list;
         VlUnpacked<CData/*7:0*/, 2> top__DOT__inst_exu__DOT__raddrMMux__DOT__i0__DOT__key_list;
@@ -80,20 +89,17 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         VlUnpacked<QData/*39:0*/, 2> top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__pair_list;
         VlUnpacked<CData/*7:0*/, 2> top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__key_list;
         VlUnpacked<IData/*31:0*/, 2> top__DOT__inst_exu__DOT__waddrMMux__DOT__i0__DOT__data_list;
-    };
-    struct {
-        VlUnpacked<IData/*31:0*/, 32> top__DOT__u_gpr__DOT__rf;
         VlUnpacked<QData/*33:0*/, 4> top__DOT__inst_store__DOT__databyte__DOT__i0__DOT__pair_list;
         VlUnpacked<CData/*1:0*/, 4> top__DOT__inst_store__DOT__databyte__DOT__i0__DOT__key_list;
         VlUnpacked<IData/*31:0*/, 4> top__DOT__inst_store__DOT__databyte__DOT__i0__DOT__data_list;
         VlUnpacked<QData/*33:0*/, 4> top__DOT__inst_store__DOT__wdatabyte__DOT__i0__DOT__pair_list;
         VlUnpacked<CData/*1:0*/, 4> top__DOT__inst_store__DOT__wdatabyte__DOT__i0__DOT__key_list;
         VlUnpacked<IData/*31:0*/, 4> top__DOT__inst_store__DOT__wdatabyte__DOT__i0__DOT__data_list;
-        VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
+        VlUnpacked<CData/*0:0*/, 5> __Vm_traceActivity;
     };
     VlTriggerVec<1> __VstlTriggered;
-    VlTriggerVec<2> __VactTriggered;
-    VlTriggerVec<2> __VnbaTriggered;
+    VlTriggerVec<3> __VactTriggered;
+    VlTriggerVec<3> __VnbaTriggered;
 
     // INTERNAL VARIABLES
     Vtop__Syms* const vlSymsp;

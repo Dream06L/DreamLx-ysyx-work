@@ -13,7 +13,6 @@ module lsu(
 );
 
 import "DPI-C" function int unsigned pmem_read(input int unsigned raddr);
- 
 import "DPI-C" function void pmem_write(
   input int  waddr, input int wdata, input byte wmask);
 
@@ -35,13 +34,29 @@ MuxKey #(4,2,32) wdatabyte(wdatabt,min2,{
   2'd2,{{8{1'b0}},wdatain[7:0],{16{1'b0}}},
   2'd3,{wdatain[7:0],{24{1'b0}}}
 });
-always @(*) begin
-  rdata = 0;
-  if (readen) begin // 有读请求时
+
+reg [31:0] r_raddr,r_waddr,r_wdata;
+reg [3:0] r_wmask;
+reg r_wen,r_readen;
+
+always@(negedge clk)begin
+ 
+  r_waddr<=waddr;
+  r_wdata<=wdata;
+  r_wmask<=wmask;
+  r_wen<=wen;
+  
+end
+always@(*)begin
+  rdata=0;
+ if (readen) begin // 有读请求时
     rdata = pmem_read(raddr);
-    end
-  if (wen) begin // 有写请求时
-      pmem_write(waddr, wdata, {4'b0000,wmask});
+    end 
+end
+always @(posedge clk) begin
+  
+  if (r_wen) begin // 有写请求时
+      pmem_write(r_waddr, r_wdata, {4'b0000,r_wmask});
     end
   
 end

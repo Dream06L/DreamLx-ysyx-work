@@ -36,7 +36,7 @@ wire [31:0] wb_data;
 //end
 wire [31:0]a0;//用于状态判断
 idu inst_du(inst,is_what,rs1,rs2,rd,imm,a0);//译码
-exu inst_exu(is_what,rdata1,rdata2,imm,pc,result,target,wmask,waddrM,raddrM,min2);//ALU
+
 
 gpr #(5,32) u_gpr (
   .clk    	(clk     ),
@@ -50,7 +50,7 @@ gpr #(5,32) u_gpr (
   .a0     	(a0      )
 );
 
-
+exu inst_exu(is_what,rdata1,rdata2,imm,pc,result,target,wmask,waddrM,raddrM,min2);//ALU
 lsu inst_store(clk,raddrM,waddrM,rdata2,wmask,is_what[2]|is_what[3],is_what[4]|is_what[5],is_what,rdataM,min2);
 
 assign wb_data = (is_what[5] | is_what[4]) ? rdataM : result;

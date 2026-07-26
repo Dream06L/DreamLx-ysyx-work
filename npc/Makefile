@@ -5,14 +5,17 @@ CPP?=main
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
 IMG ?=
+vlog = -Wno-style #-Wno-fatal	
+vfastlog= #-O3 --x-assign fast --x-initial fast
+vfst=--trace-fst
 #allbin =$(shell find $(abspath ./csrc) -name "*npc.bin")
 .PHONY:all sim wave clean cleanbin
 all: sim
-vlog = -Wno-style #-Wno-fatal		
+	
 	
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	verilator --cc --exe --build -j 0 -Wall $(vlog) --trace-fst $(CSRCS) $(VSRCS)
+	verilator --cc --exe --build -j 0 $(vfastlog) -Wall $(vlog) $(vfst) $(CSRCS) $(VSRCS)
 	obj_dir/V$(TOP) $(IMG)
 
 wave:
